@@ -1,75 +1,70 @@
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 
-local UserInputService = game:GetService("UserInputService")
-local VirtualInputManager = game:GetService("VirtualInputManager")
-local Camera = workspace.CurrentCamera
-
 local LocalPlayer = Players.LocalPlayer
 local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 local HRP = Character:WaitForChild("HumanoidRootPart")
 local PlaceId = game.PlaceId
 local JobId = game.JobId
 
-local queueteleport = (syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport)
-
-queueteleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/Roiiz/Redark/refs/heads/main/tsdsfsds'))()")
+local queueTeleport = (syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport)
+queueTeleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/Roiiz/Redark/refs/heads/main/tsdsfsds'))()")
 
 local lastCFrames = {}
 
-while task.wait(1) do
-    local found = false
-    for i = 1, 12 do
-        local target = workspace:FindFirstChild(tostring(i))
-        if target and target:FindFirstChild("RootPart") then
+local function equipFairyNet()
+    local function isFairyNet(name)
+        return string.match(name, "^Fairy Net") ~= nil
+    end
 
-			local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
+    local char = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+    local backpack = LocalPlayer:WaitForChild("Backpack")
 
-	local function stripCount(name)
-		return string.match(name, "^Fairy Net") ~= nil
-	end
-	local char = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-	local backpack = LocalPlayer:WaitForChild("Backpack")
-
-	for _, tool in ipairs(char:GetChildren()) do
-		if tool:IsA("Tool") and stripCount(tool.Name) then
-			LocalPlayer.Character.Humanoid:EquipTool(tool)
-
-		end
-	end
-
-	for _, tool in ipairs(backpack:GetChildren()) do
-		if tool:IsA("Tool") and stripCount(tool.Name) then
-			LocalPlayer.Character.Humanoid:EquipTool(tool)
-
-		end
-	end
-	local args = {
-		true,
-		CFrame.new(31.15289306640625, 0, -68.23490142822266, 0.519565999507904, 0.5315327644348145, -0.6689724326133728, -1.4901161193847656e-08, 0.7829455733299255, 0.622090220451355, 0.8544303178787231, -0.32321691513061523, 0.40679192543029785)
-	}
-	game:GetService("Players").LocalPlayer.Character:WaitForChild("InputGateway"):WaitForChild("Activation"):FireServer(unpack(args))
-	
-
-            if not lastCFrame or (lastCFrame == currentCFrame) then
-                HRP.CFrame = currentCFrame
-                found = true
-                lastCFrames[i] = currentCFrame
-                break
-            else
-                lastCFrames[i] = currentCFrame
-            end
+    for _, tool in ipairs(char:GetChildren()) do
+        if tool:IsA("Tool") and isFairyNet(tool.Name) then
+            char.Humanoid:EquipTool(tool)
         end
     end
 
-    if not found then
-        local ts = game:GetService("TeleportService")
-
-local p = game:GetService("Players").LocalPlayer
-
- 
-
-ts:Teleport(game.PlaceId, p)
+    for _, tool in ipairs(backpack:GetChildren()) do
+        if tool:IsA("Tool") and isFairyNet(tool.Name) then
+            char.Humanoid:EquipTool(tool)
+        end
     end
 end
+
+task.spawn(function()
+    while task.wait(1) do
+        local found = false
+        for i = 1, 12 do
+            local target = workspace:FindFirstChild(tostring(i))
+            if target and target:FindFirstChild("RootPart") then
+                local currentCFrame = target.RootPart.CFrame
+                local lastCFrame = lastCFrames[i]
+
+                task.spawn(equipFairyNet)
+
+               
+
+                if not lastCFrame or lastCFrame == currentCFrame then
+                    HRP.CFrame = currentCFrame
+                    found = true
+                    lastCFrames[i] = currentCFrame
+                    break
+                else
+                    lastCFrames[i] = currentCFrame
+                end
+            end
+        end
+
+        if not found then
+            TeleportService:Teleport(PlaceId, LocalPlayer)
+        end
+    end
+end)
+task.spawn(function()
+	while task.wait(.1) do
+        local args = { true, CFrame.new(0, 0, 0) }
+        Character:WaitForChild("InputGateway"):WaitForChild("Activation"):FireServer(unpack(args))
+    end
+end)
