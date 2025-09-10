@@ -1,0 +1,73 @@
+local Players = game:GetService("Players")
+local TeleportService = game:GetService("TeleportService")
+
+local UserInputService = game:GetService("UserInputService")
+local VirtualInputManager = game:GetService("VirtualInputManager")
+local Camera = workspace.CurrentCamera
+
+local LocalPlayer = Players.LocalPlayer
+local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+local HRP = Character:WaitForChild("HumanoidRootPart")
+local PlaceId = game.PlaceId
+local JobId = game.JobId
+
+local lastCFrames = {}
+
+while task.wait(1) do
+    local found = false
+    for i = 1, 12 do
+        local target = workspace:FindFirstChild(tostring(i))
+        if target and target:FindFirstChild("RootPart") then
+
+			local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+	local function stripCount(name)
+		return string.match(name, "^Fairy Net") ~= nil
+	end
+	local char = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+	local backpack = LocalPlayer:WaitForChild("Backpack")
+
+	for _, tool in ipairs(char:GetChildren()) do
+		if tool:IsA("Tool") and stripCount(tool.Name) then
+			LocalPlayer.Character.Humanoid:EquipTool(tool)
+
+		end
+	end
+
+	for _, tool in ipairs(backpack:GetChildren()) do
+		if tool:IsA("Tool") and stripCount(tool.Name) then
+			LocalPlayer.Character.Humanoid:EquipTool(tool)
+
+		end
+	end
+            local currentCFrame = target.RootPart.CFrame
+            local lastCFrame = lastCFrames[i]
+
+			local viewportSize = Camera.ViewportSize
+			local centerX, centerY = viewportSize.X / 2, viewportSize.Y / 2
+		
+			VirtualInputManager:SendMouseButtonEvent(centerX, centerY, 0, true, game, 0)
+			VirtualInputManager:SendMouseButtonEvent(centerX, centerY, 0, false, game, 0)
+
+            if not lastCFrame or (lastCFrame == currentCFrame) then
+                HRP.CFrame = currentCFrame
+                found = true
+                lastCFrames[i] = currentCFrame
+                break
+            else
+                lastCFrames[i] = currentCFrame
+            end
+        end
+    end
+
+    if not found then
+        local ts = game:GetService("TeleportService")
+
+local p = game:GetService("Players").LocalPlayer
+
+ 
+
+ts:Teleport(game.PlaceId, p)
+    end
+end
