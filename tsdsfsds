@@ -36,7 +36,7 @@ end
 task.spawn(function()
     while task.wait(1) do
         local found = false
-        for i = 1, 20 do
+        for i = 1, 50 do
             local target = workspace:FindFirstChild(tostring(i))
             if target and target:FindFirstChild("RootPart") then
                 local currentCFrame = target.RootPart.CFrame
