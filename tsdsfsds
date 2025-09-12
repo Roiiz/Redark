@@ -30,9 +30,11 @@ end
 
 task.spawn(function()
     while task.wait(1) do
+        local found = false
         for i = 1, 20 do
             local target = workspace:FindFirstChild(tostring(i))
             if target and target:FindFirstChild("RootPart") then
+                found = true
                 local currentCFrame = target.RootPart.CFrame
                 local lastCFrame = targets[i]
 
@@ -46,12 +48,15 @@ task.spawn(function()
                 else
                     targets[i] = nil
                 end
-            else
-                TeleportService:Teleport(PlaceId, LocalPlayer)
             end
+        end
+
+        if not found then
+            TeleportService:Teleport(PlaceId, LocalPlayer)
         end
     end
 end)
+
 
 
 task.spawn(function()
